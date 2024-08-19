@@ -1,29 +1,33 @@
-import {Menu} from "antd";
+import {Button, theme} from "antd";
+import {MenuFoldOutlined, MenuUnfoldOutlined} from "@ant-design/icons";
 import React from "react";
-import {Header as HeaderAntd} from "antd/es/layout/layout";
+import {Header} from "antd/es/layout/layout";
 
 // eslint-disable-next-line react/prop-types
-const Header = ({items}) => {
-    return <HeaderAntd style={{
-            position: 'sticky',
-            top: 0,
-            zIndex: 1,
-            width: '100%',
-            display: 'flex',
-            alignItems: 'center',
-        }}>
-        <div className="demo-logo"/>
-        <Menu
-            theme="dark"
-            mode="horizontal"
-            defaultSelectedKeys={['2']}
-            items={items}
+const MyHeader = ({collapsed, setCollapsed}) => {
+    const {
+        token: {colorBgContainer},
+    } = theme.useToken();
+
+    return (
+        <Header
             style={{
-                flex: 1,
-                minWidth: 0,
+                padding: 0,
+                background: colorBgContainer,
             }}
-        />
-    </HeaderAntd>
+        >
+            <Button
+                type="text"
+                icon={collapsed ? <MenuUnfoldOutlined/> : <MenuFoldOutlined/>}
+                onClick={() => setCollapsed(!collapsed)}
+                style={{
+                    fontSize: '16px',
+                    width: 64,
+                    height: 64,
+                }}
+            />
+        </Header>
+    );
 }
 
-export default Header;
+export default MyHeader;

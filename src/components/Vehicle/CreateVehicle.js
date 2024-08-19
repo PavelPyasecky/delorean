@@ -1,6 +1,6 @@
-import React, { useState } from 'react';
-import { useMutation, gql } from '@apollo/client';
-import {useNavigate} from "react-router-dom";
+import React, {useState} from 'react';
+import {useMutation, gql} from '@apollo/client';
+import {VEHICLE_QUERY} from "./VehicleList";
 
 const CREATE_VEHICLE_MUTATION = gql`
   mutation PostMutation(
@@ -23,17 +23,46 @@ const CreateVehicle = () => {
     const [formState, setFormState] = useState({
         vin: '',
     });
-    const navigate = useNavigate();
+    const [errorMesages, setErrorMesages] = useState([]);
 
     const [createVehicle] = useMutation(CREATE_VEHICLE_MUTATION, {
         variables: {
             vin: formState.vin,
         },
-        onCompleted: () => navigate('/vehicles')
+        update: (cache, {data}) => {
+            const cached_data = cache.readQuery({
+                query: VEHICLE_QUERY,
+            });
+            if (data){
+                console.log(cached_data);
+                console.log(data);
+                cache.writeQuery({
+                    query: VEHICLE_QUERY,
+                    data: {
+                        vehicle: [ data.createVehicle, ...cached_data.vehicle]
+                    }
+                })
+            }
+
+        },
+        onCompleted: ({createVehicle, errors}) => {
+            if (errors) {
+                let errorList = errors.nonFieldErrors.map((item) => item.message);
+                setErrorMesages(errorList);
+            } else {
+                setErrorMesages(['Success!', `Car with VIN: ${createVehicle.vin} successfully registered.`])
+
+                setFormState({
+                    vin: ''
+                })
+            }
+
+        }
     });
 
     return (
         <div>
+            {errorMesages.map((error, index) => <p key={index}>{error}</p>)}
             <form
                 onSubmit={(e) => {
                     e.preventDefault();

@@ -2,7 +2,7 @@ import React from 'react';
 import Vehicle from './Vehicle';
 import { useQuery, gql } from '@apollo/client';
 
-const VEHICLE_QUERY = gql`
+export const VEHICLE_QUERY = gql`
   {
   vehicle{
     id,

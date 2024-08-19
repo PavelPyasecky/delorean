@@ -1,7 +1,7 @@
 import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import {gql, useMutation} from "@apollo/client";
-import {AUTH_TOKEN} from "../constants";
+import {AUTH_TOKEN} from "../../constants";
 
 const SIGNUP_MUTATION = gql`
   mutation SignupMutation(
@@ -54,6 +54,7 @@ const Login = () => {
         password2: '',
         username: ''
     });
+    const [errorMesages, setErrorMesages] = useState([])
 
 
     const [login] = useMutation(LOGIN_MUTATION, {
@@ -61,9 +62,15 @@ const Login = () => {
             username: formState.username,
             password: formState.password1
         },
-        onCompleted: ({ token }) => {
-            localStorage.setItem(AUTH_TOKEN, token);
-            navigate('/');
+        onCompleted: ({tokenAuth}) => {
+            if (tokenAuth.errors) {
+                let errorList = tokenAuth.errors.nonFieldErrors.map((item) => item.message);
+                setErrorMesages(errorList);
+            }
+            else{
+                localStorage.setItem(AUTH_TOKEN, tokenAuth.token);
+                navigate('/');
+            }
         }
     });
 
@@ -74,9 +81,15 @@ const Login = () => {
             password1: formState.password1,
             password2: formState.password2
         },
-        onCompleted: ({ token }) => {
-            localStorage.setItem(AUTH_TOKEN, token);
-            navigate('/');
+        onCompleted: ({ token, errors}) => {
+            if (errors) {
+                let errorList = errors.nonFieldErrors.map((item) => item.message);
+                setErrorMesages(errorList);
+            }
+            else{
+                localStorage.setItem(AUTH_TOKEN, token);
+                navigate('/');
+            }
         }
     });
 
@@ -86,6 +99,7 @@ const Login = () => {
             <h4 className="mv3">
                 {formState.login ? 'Login' : 'Sign Up'}
             </h4>
+            {errorMesages.map((error, index) => <p key={index}>{error}</p>)}
             <div className="flex flex-column">
                 {!formState.login && (
                     <input

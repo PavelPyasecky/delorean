@@ -10,13 +10,13 @@ import {
     InMemoryCache
 } from '@apollo/client';
 import Home from "./components/Home/Home";
-import CreateVehicle from "./components/CreateVehicle";
-import VehicleList from "./components/VehicleList";
+import CreateVehicle from "./components/Vehicle/CreateVehicle";
+import VehicleList from "./components/Vehicle/VehicleList";
 import ErrorPage from "./components/utils/ErrorPage";
-import Login from "./components/Login";
+import Login from "./components/utils/Login";
 import {setContext} from "@apollo/client/link/context";
 import {AUTH_TOKEN} from "./constants";
-import SpareList from "./components/SpareList";
+import SpareList from "./components/Spares/SpareList";
 
 const httpLink = createHttpLink({
     uri: 'http://localhost:8000/graphql/'
@@ -27,7 +27,7 @@ const authLink = setContext((_, { headers }) => {
     return {
         headers: {
             ...headers,
-            authorization: token ? `Bearer ${token}` : ''
+            authorization: token ? `JWT ${token}` : ''
         }
     };
 });
@@ -58,13 +58,13 @@ const router = createBrowserRouter([
             {
                 path: "/spares",
                 element: <SpareList/>
-            }
+            },
+            {
+                path: "/login",
+                element: <Login/>,
+            },
         ]
     },
-    {
-        path: "/login",
-        element: <Login/>,
-    }
 ]);
 
 const root = ReactDOM.createRoot(document.getElementById('root'));

@@ -1,5 +1,5 @@
 import React from 'react';
-import {timeDifferenceForDate} from "./utils/utils";
+import {timeDifferenceForDate} from "../utils/utils";
 
 const Spare = (props) => {
     // eslint-disable-next-line react/prop-types
