@@ -15,7 +15,7 @@ const Spare = (props) => {
                 {/* eslint-disable-next-line react/prop-types */}
                 {node.cost}{' '}
                 {/* eslint-disable-next-line react/prop-types */}
-                {node.createdBy.username}{' '}
+                {node.createdBy?.username}{' '}
                 {/* eslint-disable-next-line react/prop-types */}
                 {timeDifferenceForDate(node.createdDate)}
             </div>

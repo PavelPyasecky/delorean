@@ -3,20 +3,21 @@ import {useMutation, gql} from '@apollo/client';
 import {VEHICLE_QUERY} from "./VehicleList";
 
 const CREATE_VEHICLE_MUTATION = gql`
-  mutation PostMutation(
-    $vin: String!
-  ) {
-  createVehicle(
-    vin: $vin
-  ) {
-    id,
-    vin,
-    owner{
-    username,
-    email
-    }
+  mutation PostMutation($vin: String!)
+{
+  createVehicle(input: { vin: $vin}) {
+      vehicle {
+          id
+          vin
+          createdDate
+          createdBy{
+              id
+              username
+              email
+          }
+      }
   }
- }
+}
 `;
 
 const CreateVehicle = () => {
@@ -34,12 +35,12 @@ const CreateVehicle = () => {
                 query: VEHICLE_QUERY,
             });
             if (data){
-                console.log(cached_data);
-                console.log(data);
                 cache.writeQuery({
                     query: VEHICLE_QUERY,
                     data: {
-                        vehicle: [ data.createVehicle, ...cached_data.vehicle]
+                        vehicles: {
+                            edges: [ data.createVehicle, ...cached_data.vehicles.edges]
+                        }
                     }
                 })
             }
