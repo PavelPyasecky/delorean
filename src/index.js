@@ -17,6 +17,8 @@ import Login from "./components/utils/Login";
 import {setContext} from "@apollo/client/link/context";
 import {AUTH_TOKEN} from "./constants";
 import SpareList from "./components/Spares/SpareList";
+import VerifyAccount from "./components/utils/Activate";
+import AfterLogin from "./components/utils/AfterLogin";
 
 const httpLink = createHttpLink({
     uri: 'http://localhost:8000/graphql/'
@@ -38,6 +40,11 @@ const client = new ApolloClient({
 });
 
 const router = createBrowserRouter([
+    {
+        path: "/activate/:token",
+        element: <VerifyAccount/>,
+        errorElement: <ErrorPage/>,
+    },
     {
         path: "/",
         element: <Home/>,
@@ -62,6 +69,10 @@ const router = createBrowserRouter([
             {
                 path: "/login",
                 element: <Login/>,
+            },
+            {
+                path: "/after-login",
+                element: <AfterLogin/>,
             },
         ]
     },

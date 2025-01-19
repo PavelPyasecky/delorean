@@ -23,7 +23,7 @@ const CreateVehicle = () => {
     const [formState, setFormState] = useState({
         vin: '',
     });
-    const [errorMesages, setErrorMesages] = useState([]);
+    const [errorMessages, setErrorMessages] = useState([]);
 
     const [createVehicle] = useMutation(CREATE_VEHICLE_MUTATION, {
         variables: {
@@ -48,9 +48,9 @@ const CreateVehicle = () => {
         onCompleted: ({createVehicle, errors}) => {
             if (errors) {
                 let errorList = errors.nonFieldErrors.map((item) => item.message);
-                setErrorMesages(errorList);
+                setErrorMessages(errorList);
             } else {
-                setErrorMesages(['Success!', `Car with VIN: ${createVehicle.vin} successfully registered.`])
+                setErrorMessages(['Success!', `Car with VIN: ${createVehicle.vin} successfully registered.`])
 
                 setFormState({
                     vin: ''
@@ -62,7 +62,7 @@ const CreateVehicle = () => {
 
     return (
         <div>
-            {errorMesages.map((error, index) => <p key={index}>{error}</p>)}
+            {errorMessages.map((error, index) => <p key={index}>{error}</p>)}
             <form
                 onSubmit={(e) => {
                     e.preventDefault();

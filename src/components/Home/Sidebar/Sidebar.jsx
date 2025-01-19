@@ -27,13 +27,21 @@ const Sidebar = ({collapsed}) => {
                     key: '4', icon: <Link to={"/spares"}><ToolOutlined/></Link>, label: 'Spares',
                 }, authToken && {
                     key: '5', icon: <Link to={"/analytics"}><AreaChartOutlined/></Link>, label: 'Analytics',
-                }, authToken ?? {
+                }]}
+            />
+            <Menu
+                theme="dark"
+                mode="inline"
+                items={[
+                    authToken ?? {
                     key: '6', icon: <Link to={"/login"}><LoginOutlined/></Link>, label: 'login',
-                }, authToken && {
+                    },
+                    authToken && {
                     key: '7', icon: <Link to={"/"} onClick={() => {
                         localStorage.removeItem(AUTH_TOKEN)
                     }}><LoginOutlined/></Link>, label: 'logout',
                 }]}
+                style={{position: 'absolute', bottom: '15px',}}
             />
         </Sider>
     );

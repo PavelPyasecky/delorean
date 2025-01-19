@@ -20,7 +20,6 @@ const SIGNUP_MUTATION = gql`
   ) {
     success,
     errors,
-    token,
   }
 }
 `;
@@ -54,7 +53,7 @@ const Login = () => {
         password2: '',
         username: ''
     });
-    const [errorMesages, setErrorMesages] = useState([])
+    const [errorMessages, setErrorMessages] = useState([])
 
 
     const [login] = useMutation(LOGIN_MUTATION, {
@@ -65,7 +64,7 @@ const Login = () => {
         onCompleted: ({tokenAuth}) => {
             if (tokenAuth.errors) {
                 let errorList = tokenAuth.errors.nonFieldErrors.map((item) => item.message);
-                setErrorMesages(errorList);
+                setErrorMessages(errorList);
             }
             else{
                 localStorage.setItem(AUTH_TOKEN, tokenAuth.token);
@@ -81,14 +80,13 @@ const Login = () => {
             password1: formState.password1,
             password2: formState.password2
         },
-        onCompleted: ({ token, errors}) => {
+        onCompleted: ({ errors}) => {
             if (errors) {
                 let errorList = errors.nonFieldErrors.map((item) => item.message);
-                setErrorMesages(errorList);
+                setErrorMessages(errorList);
             }
             else{
-                localStorage.setItem(AUTH_TOKEN, token);
-                navigate('/');
+                navigate('/after-login');
             }
         }
     });
@@ -99,7 +97,9 @@ const Login = () => {
             <h4 className="mv3">
                 {formState.login ? 'Login' : 'Sign Up'}
             </h4>
-            {errorMesages.map((error, index) => <p key={index}>{error}</p>)}
+
+            {errorMessages.map((error, index) => <p key={index}>{error}</p>)}
+
             <div className="flex flex-column">
                 {!formState.login && (
                     <input
@@ -148,6 +148,7 @@ const Login = () => {
                     placeholder="Repeat your password"
                 />)}
             </div>
+
             <div className="flex mt3">
                 <button
                     className="pointer mr2 button"
@@ -157,7 +158,7 @@ const Login = () => {
                 </button>
                 <button
                     className="pointer button"
-                    onClick={(e) =>
+                    onClick={() =>
                         setFormState({
                             ...formState,
                             login: !formState.login
