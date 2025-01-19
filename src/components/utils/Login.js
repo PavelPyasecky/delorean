@@ -68,6 +68,7 @@ const Login = () => {
             }
             else{
                 localStorage.setItem(AUTH_TOKEN, tokenAuth.token);
+                window.location.reload();
                 navigate('/');
             }
         }
