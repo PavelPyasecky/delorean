@@ -1,6 +1,13 @@
 import {Menu} from "antd";
 import {Link} from "react-router-dom";
-import {AreaChartOutlined, CarOutlined, HomeOutlined, LoginOutlined, ToolOutlined} from "@ant-design/icons";
+import {
+    AreaChartOutlined,
+    CarOutlined,
+    HomeOutlined,
+    HourglassOutlined,
+    LoginOutlined,
+    ToolOutlined
+} from "@ant-design/icons";
 import {AUTH_TOKEN} from "../../../constants";
 import React, {useState} from "react";
 import Sider from "antd/es/layout/Sider";
@@ -28,18 +35,21 @@ const Sidebar = ({collapsed}) => {
                 }, token && {
                     key: '4', icon: <Link to={"/spares"}><ToolOutlined/></Link>, label: 'Spares',
                 }, token && {
-                    key: '5', icon: <Link to={"/analytics"}><AreaChartOutlined/></Link>, label: 'Analytics',
-                }]}
+                    key: '5', icon: <Link to={"/completed-work"}><HourglassOutlined/></Link>, label: 'Completed Work',
+                }, token && {
+                    key: '6', icon: <Link to={"/analytics"}><AreaChartOutlined/></Link>, label: 'Analytics',
+                }
+                ]}
             />
             <Menu
                 theme="dark"
                 mode="inline"
                 items={[
                     authToken ?? {
-                    key: '6', icon: <Link to={"/login"}><LoginOutlined/></Link>, label: 'login',
+                    key: '7', icon: <Link to={"/login"}><LoginOutlined/></Link>, label: 'login',
                     },
                     authToken && {
-                    key: '7', icon: <Link to={"/"} onClick={() => {
+                    key: '8', icon: <Link to={"/"} onClick={() => {
                         setToken('')
                         localStorage.removeItem(AUTH_TOKEN)
                     }}><LoginOutlined/></Link>, label: 'logout',

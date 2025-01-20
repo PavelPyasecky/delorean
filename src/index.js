@@ -19,6 +19,7 @@ import {AUTH_TOKEN} from "./constants";
 import SpareList from "./components/Spares/SpareList";
 import VerifyAccount from "./components/utils/Activate";
 import AfterLogin from "./components/utils/AfterLogin";
+import CompletedWorkList from "./components/CompletedWork/CompletedWorkList";
 
 const httpLink = createHttpLink({
     uri: 'http://localhost:8000/graphql/'
@@ -65,6 +66,10 @@ const router = createBrowserRouter([
             {
                 path: "/spares",
                 element: <SpareList/>
+            },
+            {
+                path: "/completed-work",
+                element: <CompletedWorkList/>
             },
             {
                 path: "/login",
