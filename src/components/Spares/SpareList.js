@@ -1,8 +1,9 @@
 import React from 'react';
 import { useQuery, gql } from '@apollo/client';
 import Spare from "./Spare";
+import CreateSpare from "./CreateSpare";
 
-const VEHICLE_QUERY = gql`
+export const SPARES_QUERY = gql`
   query {
     spares{
         edges {
@@ -29,14 +30,15 @@ const VEHICLE_QUERY = gql`
 ;
 
 const SpareList = () => {
-    const { data } = useQuery(VEHICLE_QUERY);
+    const { data } = useQuery(SPARES_QUERY);
 
     return (
         <div>
+            <CreateSpare/>
             {data && (
                 <>
                     {data.spares.edges.map((item, index) => (
-                        <Spare key={item.id} node={item.node} index={index}/>
+                        <Spare key={item.node.id} node={item.node} index={index}/>
                     ))}
                 </>
             )}

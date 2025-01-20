@@ -4,7 +4,6 @@ import {timeDifferenceForDate} from "../utils/utils";
 const Spare = (props) => {
     // eslint-disable-next-line react/prop-types
     const { node } = props;
-    window.console.log(node)
     return (
         <div>
             <div>
