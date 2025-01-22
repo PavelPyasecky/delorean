@@ -46,9 +46,8 @@ const CreateSpare = () => {
             const cached_data = cache.readQuery({
                 query: SPARES_QUERY,
             });
-            if (data){
-                console.log(cached_data);
-                console.log(data);
+
+            if (data && cached_data){
                 cache.writeQuery({
                     query: SPARES_QUERY,
                     data: {

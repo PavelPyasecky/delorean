@@ -1,5 +1,37 @@
 import React, { useState } from 'react';
 import { Form, Input, InputNumber, Popconfirm, Table, Typography } from 'antd';
+import {gql, useMutation} from "@apollo/client";
+import {SPARES_QUERY} from "./SpareList";
+
+const UPDATE_SPARE_MUTATION = gql`
+  mutation UpdateSpareMutation(
+    $id: Int!
+    $name: String! 
+    $count: Int!
+    $cost: Float!
+  ) {
+  updateSpare(input: 
+    {
+        id: $id
+        name: $name
+        count: $count
+        cost: $cost 
+    }
+  ){
+    spare{
+       id
+       name
+       cost
+       count
+       createdBy{
+        firstName
+        lastName
+       }
+       createdDate
+    }
+   }
+  }
+`;
 
 
 const EditableCell = ({
@@ -39,8 +71,47 @@ const EditableCell = ({
 
 // eslint-disable-next-line react/prop-types
 const SparesTable = ({dataTable}) => {
+    let preparedData = [];
+    if (dataTable) {
+        // eslint-disable-next-line react/prop-types
+        preparedData = dataTable.edges.map(item => {
+            item = item.node;
+            return {
+                ...item,
+                createdDate: item.createdDate.split('T')[0],
+                authorName: `${item.createdBy.firstName} ${item.createdBy.lastName}`,
+                key: item.id
+            }
+        })
+    }
+
+    const [updateSpare, { loading, error }] = useMutation(UPDATE_SPARE_MUTATION, {
+        update: (cache, {data}) => {
+            const cached_data = cache.readQuery({
+                query: SPARES_QUERY,
+            });
+
+            if (data && cached_data){
+                cache.writeQuery({
+                    query: SPARES_QUERY,
+                    data: {
+                        spares: {
+                            edges: [data.updateSpare.spare, ...cached_data.spares.edges]
+                        }
+                    }
+                })
+            }
+
+        },
+        onCompleted: ({errors}) => {
+            if (errors) {
+                console.log(errors);
+            }
+        }
+    });
+
     const [form] = Form.useForm();
-    const [data, setData] = useState(dataTable);
+    const [data, setData] = useState(preparedData);
     const [editingKey, setEditingKey] = useState('');
     const isEditing = (record) => record.key === editingKey;
     const edit = (record) => {
@@ -68,8 +139,25 @@ const SparesTable = ({dataTable}) => {
                     ...item,
                     ...row,
                 });
-                setData(newData);
-                setEditingKey('');
+
+                updateSpare(
+                    {
+                        variables: {
+                            id: key,
+                            name: newData[index].name,
+                            count: newData[index].count,
+                            cost: newData[index].cost,
+                        }
+                    })
+                if (error) {
+                    console.log(error);
+                    setEditingKey('');
+                }
+                else {
+                    setData(newData);
+                    setEditingKey('');
+                }
+
             } else {
                 newData.push(row);
                 setData(newData);
@@ -84,7 +172,7 @@ const SparesTable = ({dataTable}) => {
             title: 'date',
             dataIndex: 'createdDate',
             width: '15%',
-            editable: true,
+            editable: false,
         },
         {
             title: 'name',
@@ -108,7 +196,7 @@ const SparesTable = ({dataTable}) => {
             title: 'author',
             dataIndex: 'authorName',
             width: '30%',
-            editable: true,
+            editable: false,
         },
         {
             title: 'operation',
@@ -145,7 +233,7 @@ const SparesTable = ({dataTable}) => {
             ...col,
             onCell: (record) => ({
                 record,
-                inputType: col.dataIndex in ['name', 'author'] ? 'text' : 'number',
+                inputType: ['name', 'author'].indexOf(col.dataIndex) !== -1 ? 'text' : 'number',
                 dataIndex: col.dataIndex,
                 title: col.title,
                 editing: isEditing(record),
