@@ -98,7 +98,7 @@ const CreateCompletedWork = () => {
                             })
                         }
                         type="text"
-                        placeholder="Brake pads"
+                        placeholder="Replacing the oil filter"
                     />
                     <input
                         className="mb2"
@@ -110,7 +110,7 @@ const CreateCompletedWork = () => {
                             })
                         }
                         type="text"
-                        placeholder="2"
+                        placeholder="1"
                     />
                     <input
                         className="mb2"
@@ -122,7 +122,7 @@ const CreateCompletedWork = () => {
                             })
                         }
                         type="text"
-                        placeholder="100"
+                        placeholder="24"
                     />
                 </div>
                 <button type="submit">Submit</button>

@@ -2,6 +2,7 @@ import React from 'react';
 import { useQuery, gql } from '@apollo/client';
 import Spare from "./Spare";
 import CreateSpare from "./CreateSpare";
+import SparesTable from "./SparesTable";
 
 export const SPARES_QUERY = gql`
   query {
@@ -11,10 +12,13 @@ export const SPARES_QUERY = gql`
                 id
                 name
                 cost
+                count
                 createdDate
                 createdBy{
                     id
                     username
+                    firstName
+                    lastName
                     email
                 }
             }
@@ -30,18 +34,30 @@ export const SPARES_QUERY = gql`
 ;
 
 const SpareList = () => {
-    const { data } = useQuery(SPARES_QUERY);
+    const { loading, error, data } = useQuery(SPARES_QUERY);
+
+    if (loading) return "Loading...";
+    if (error) return `Error! ${error.message}`;
+
+    let preparedData = [];
+    if (data && data.spares) {
+        preparedData = data.spares.edges.map(item => {
+            item = item.node;
+            return {
+                ...item,
+                createdDate: item.createdDate.split('T')[0],
+                authorName: `${item.createdBy.firstName} ${item.createdBy.lastName}`,
+                key: item.id
+            }
+        })
+    }
 
     return (
         <div>
             <CreateSpare/>
-            {data && (
-                <>
-                    {data.spares.edges.map((item, index) => (
-                        <Spare key={item.node.id} node={item.node} index={index}/>
-                    ))}
-                </>
-            )}
+            <br/>
+            <br/>
+            <SparesTable dataTable={preparedData} />
         </div>
     );
 };
