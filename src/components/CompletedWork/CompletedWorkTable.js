@@ -1,5 +1,38 @@
 import React, { useState } from 'react';
 import { Form, Input, InputNumber, Popconfirm, Table, Typography } from 'antd';
+import {gql, useMutation} from "@apollo/client";
+import {COMPLETED_WORK_QUERY} from "./CompletedWorkList";
+
+
+const UPDATE_COMPLETED_WORK_MUTATION = gql`
+  mutation UpdateCompletedWorkMutation(
+    $id: Int!
+    $name: String! 
+    $hours: Int!
+    $cost: Float!
+  ) {
+  updateCompletedWork(input: 
+    {
+        id: $id
+        name: $name
+        hours: $hours
+        cost: $cost 
+    }
+  ){
+    completedWork{
+       id
+       name
+       cost
+       hours
+       createdBy{
+        firstName
+        lastName
+       }
+       createdDate
+    }
+   }
+  }
+`;
 
 
 const EditableCell = ({
@@ -39,6 +72,32 @@ const EditableCell = ({
 
 // eslint-disable-next-line react/prop-types
 const CompletedWorkTable = ({dataTable}) => {
+
+    const [updateCompleteWork, { loading, error }] = useMutation(UPDATE_COMPLETED_WORK_MUTATION, {
+        update: (cache, {data}) => {
+            const cached_data = cache.readQuery({
+                query: COMPLETED_WORK_QUERY,
+            });
+
+            if (data && cached_data){
+                cache.writeQuery({
+                    query: COMPLETED_WORK_QUERY,
+                    data: {
+                        spares: {
+                            edges: [data.updateCompleteWork.completedWork, ...cached_data.completedWorkList.edges]
+                        }
+                    }
+                })
+            }
+
+        },
+        onCompleted: ({errors}) => {
+            if (errors) {
+                console.log(errors);
+            }
+        }
+    });
+
     const [form] = Form.useForm();
     const [data, setData] = useState(dataTable);
     const [editingKey, setEditingKey] = useState('');
@@ -68,8 +127,25 @@ const CompletedWorkTable = ({dataTable}) => {
                     ...item,
                     ...row,
                 });
-                setData(newData);
-                setEditingKey('');
+
+                updateCompleteWork(
+                    {
+                        variables: {
+                            id: key,
+                            name: newData[index].name,
+                            hours: newData[index].hours,
+                            cost: newData[index].cost,
+                        }
+                    })
+                if (error) {
+                    console.log(error);
+                    setEditingKey('');
+                }
+                else {
+                    setData(newData);
+                    setEditingKey('');
+                }
+
             } else {
                 newData.push(row);
                 setData(newData);
@@ -84,7 +160,7 @@ const CompletedWorkTable = ({dataTable}) => {
             title: 'date',
             dataIndex: 'createdDate',
             width: '15%',
-            editable: true,
+            editable: false,
         },
         {
             title: 'name',
@@ -108,7 +184,7 @@ const CompletedWorkTable = ({dataTable}) => {
             title: 'author',
             dataIndex: 'authorName',
             width: '30%',
-            editable: true,
+            editable: false,
         },
         {
             title: 'operation',
