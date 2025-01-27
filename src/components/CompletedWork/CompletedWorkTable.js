@@ -98,6 +98,11 @@ const CompletedWorkTable = ({dataTable}) => {
         }
     });
 
+    const [sortedInfo, setSortedInfo] = useState({});
+    const handleChange = (pagination, filters, sorter) => {
+        setSortedInfo(sorter);
+    };
+
     const [form] = Form.useForm();
     const [data, setData] = useState(dataTable);
     const [editingKey, setEditingKey] = useState('');
@@ -161,30 +166,45 @@ const CompletedWorkTable = ({dataTable}) => {
             dataIndex: 'createdDate',
             width: '15%',
             editable: false,
+            key: 'date',
+            sorter: (a, b) => new Date(a.createdDate) - new Date(b.createdDate),
+            sortOrder: sortedInfo.columnKey === 'date' ? sortedInfo.order : null,
         },
         {
             title: 'name',
             dataIndex: 'name',
             width: '25%',
             editable: true,
+            key: 'name',
+            sorter: (a, b) => a.name.length - b.name.length,
+            sortOrder: sortedInfo.columnKey === 'name' ? sortedInfo.order : null,
         },
         {
             title: 'hours',
             dataIndex: 'hours',
             width: '15%',
             editable: true,
+            key: 'hours',
+            sorter: (a, b) => a.hours - b.hours,
+            sortOrder: sortedInfo.columnKey === 'hours' ? sortedInfo.order : null,
         },
         {
             title: 'cost',
             dataIndex: 'cost',
             width: '15%',
             editable: true,
+            key: 'cost',
+            sorter: (a, b) => a.cost - b.cost,
+            sortOrder: sortedInfo.columnKey === 'cost' ? sortedInfo.order : null,
         },
         {
             title: 'author',
             dataIndex: 'authorName',
             width: '30%',
             editable: false,
+            key: 'author',
+            sorter: (a, b) => a.authorName.length - b.authorName.length,
+            sortOrder: sortedInfo.columnKey === 'author' ? sortedInfo.order : null,
         },
         {
             title: 'operation',
@@ -243,6 +263,7 @@ const CompletedWorkTable = ({dataTable}) => {
                 pagination={{
                     onChange: cancel,
                 }}
+                onChange={handleChange}
             />
         </Form>
     );
