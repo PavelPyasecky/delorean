@@ -110,6 +110,11 @@ const SparesTable = ({dataTable}) => {
         }
     });
 
+    const [sortedInfo, setSortedInfo] = useState({});
+    const handleChange = (pagination, filters, sorter) => {
+        setSortedInfo(sorter);
+    };
+
     const [form] = Form.useForm();
     const [data, setData] = useState(preparedData);
     const [editingKey, setEditingKey] = useState('');
@@ -171,32 +176,47 @@ const SparesTable = ({dataTable}) => {
         {
             title: 'date',
             dataIndex: 'createdDate',
+            key: 'date',
             width: '15%',
             editable: false,
+            sorter: (a, b) => new Date(a.createdDate) - new Date(b.createdDate),
+            sortOrder: sortedInfo.columnKey === 'date' ? sortedInfo.order : null,
         },
         {
             title: 'name',
             dataIndex: 'name',
+            key: 'name',
             width: '25%',
             editable: true,
+            sorter: (a, b) => a.name.length - b.name.length,
+            sortOrder: sortedInfo.columnKey === 'name' ? sortedInfo.order : null,
         },
         {
             title: 'count',
             dataIndex: 'count',
+            key: 'count',
             width: '15%',
             editable: true,
+            sorter: (a, b) => a.count - b.count,
+            sortOrder: sortedInfo.columnKey === 'count' ? sortedInfo.order : null,
         },
         {
             title: 'cost',
             dataIndex: 'cost',
+            key: 'cost',
             width: '15%',
             editable: true,
+            sorter: (a, b) => a.cost - b.cost,
+            sortOrder: sortedInfo.columnKey === 'cost' ? sortedInfo.order : null,
         },
         {
             title: 'author',
             dataIndex: 'authorName',
+            key: 'author',
             width: '30%',
             editable: false,
+            sorter: (a, b) => a.authorName.length - b.authorName.length,
+            sortOrder: sortedInfo.columnKey === 'author' ? sortedInfo.order : null,
         },
         {
             title: 'operation',
@@ -255,6 +275,7 @@ const SparesTable = ({dataTable}) => {
                 pagination={{
                     onChange: cancel,
                 }}
+                onChange={handleChange}
             />
         </Form>
     );
