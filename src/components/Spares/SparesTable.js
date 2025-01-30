@@ -9,6 +9,7 @@ const UPDATE_SPARE_MUTATION = gql`
     $name: String! 
     $count: Int!
     $cost: Float!
+    $installationDate: Date!
   ) {
   updateSpare(input: 
     {
@@ -16,6 +17,7 @@ const UPDATE_SPARE_MUTATION = gql`
         name: $name
         count: $count
         cost: $cost 
+        installationDate: $installationDate
     }
   ){
     spare{
@@ -27,7 +29,7 @@ const UPDATE_SPARE_MUTATION = gql`
         firstName
         lastName
        }
-       createdDate
+       installationDate
     }
    }
   }
@@ -78,7 +80,7 @@ const SparesTable = ({dataTable}) => {
             item = item.node;
             return {
                 ...item,
-                createdDate: item.createdDate.split('T')[0],
+                installationDate: item.installationDate.split('T')[0],
                 authorName: `${item.createdBy.firstName} ${item.createdBy.lastName}`,
                 key: item.id
             }
@@ -174,16 +176,16 @@ const SparesTable = ({dataTable}) => {
     };
     const columns = [
         {
-            title: 'date',
-            dataIndex: 'createdDate',
+            title: 'Installation date',
+            dataIndex: 'installationDate',
             key: 'date',
             width: '15%',
             editable: false,
-            sorter: (a, b) => new Date(a.createdDate) - new Date(b.createdDate),
+            sorter: (a, b) => new Date(a.installationDate) - new Date(b.installationDate),
             sortOrder: sortedInfo.columnKey === 'date' ? sortedInfo.order : null,
         },
         {
-            title: 'name',
+            title: 'Name',
             dataIndex: 'name',
             key: 'name',
             width: '25%',
@@ -192,7 +194,7 @@ const SparesTable = ({dataTable}) => {
             sortOrder: sortedInfo.columnKey === 'name' ? sortedInfo.order : null,
         },
         {
-            title: 'count',
+            title: 'Count',
             dataIndex: 'count',
             key: 'count',
             width: '15%',
@@ -201,7 +203,7 @@ const SparesTable = ({dataTable}) => {
             sortOrder: sortedInfo.columnKey === 'count' ? sortedInfo.order : null,
         },
         {
-            title: 'cost',
+            title: 'Cost',
             dataIndex: 'cost',
             key: 'cost',
             width: '15%',
@@ -210,7 +212,7 @@ const SparesTable = ({dataTable}) => {
             sortOrder: sortedInfo.columnKey === 'cost' ? sortedInfo.order : null,
         },
         {
-            title: 'author',
+            title: 'Author',
             dataIndex: 'authorName',
             key: 'author',
             width: '30%',
@@ -219,7 +221,7 @@ const SparesTable = ({dataTable}) => {
             sortOrder: sortedInfo.columnKey === 'author' ? sortedInfo.order : null,
         },
         {
-            title: 'operation',
+            title: 'Operation',
             dataIndex: 'operation',
             render: (_, record) => {
                 const editable = isEditing(record);

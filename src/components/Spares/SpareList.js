@@ -12,7 +12,7 @@ export const SPARES_QUERY = gql`
                 name
                 cost
                 count
-                createdDate
+                installationDate
                 createdBy{
                     id
                     username
